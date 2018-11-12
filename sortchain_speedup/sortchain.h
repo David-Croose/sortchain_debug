@@ -37,14 +37,20 @@ typedef struct SCHNODE {
 } schnode_t;   // sort chain node
 
 typedef struct {
-    schnode_t nodes[SCH_NODES_TOTAL];   // TODO  should be configurable here
+    schnode_t nodes[SCH_NODES_TOTAL];      // TODO  should be configurable here
     char full_flag;
-    unsigned int oldestseq;     // the oldest sequence
-    unsigned int newestseq;     // the newest sequence, note that the variable
-                                // represents the new coming data seq, the real
-                                // newest seq in sort chain is @newestseq - 1
+    unsigned int oldestseq;                // the oldest sequence
+    unsigned int newestseq;                // the newest sequence, note that the variable
+                                           // represents the new coming data seq, the real
+                                           // newest seq in sort chain is @newestseq - 1
     schnode_t *head;
-    unsigned int thres;         // threshold
+    unsigned int thres;                    // threshold, the window size of the this handle
+    unsigned int sectot;                   // section-total
+    schdat_t secval[SCH_NODES_TOTAL];      // section-value, the datas in a handle
+                                           // will be divided into @sectot sections.
+                                           // the sections, each of them has a value
+                                           // @secval[n], means the minimal value in
+                                           // this section
 } schh_t;
 
 typedef enum {

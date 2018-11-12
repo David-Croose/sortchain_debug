@@ -275,7 +275,6 @@ schres_t sortchain_add(schh_t *handle, schdat_t data, schdat_t *mid)
         {
             return SCHRES_ERR;
         }
-        ////////////////////////////////////
         if(is_full(handle) == SCH_TRUE)
         {
             if(is_seqtop(handle) == SCH_TRUE)
