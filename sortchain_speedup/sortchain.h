@@ -46,12 +46,14 @@ typedef struct {
     schnode_t *head;
     unsigned int thres;                    // threshold, the window size of the this handle
     unsigned int sectot;                   // section-total
-    schdat_t secval[SCH_NODES_TOTAL];      // section-value, the datas in a handle
-                                           // will be divided into @sectot sections.
-                                           // the sections, each of them has a value
-                                           // @secval[n], means the minimal value in
-                                           // this section
-} schh_t;
+    struct {                               // section, the datas in a handle
+        schnode_t *addr;                   // will be divided into @sectot sections.
+        schdat_t minimum;                  // the sections, each of them has a value
+    } sec[SCH_NODES_TOTAL];                // @sec[n].minimum, means the minimal value in
+                                           // this section.
+    schdat_t mid;
+
+} schh_t;                                  // sort-chain handle
 
 typedef enum {
     SCHRES_OK,         // ok
@@ -59,7 +61,7 @@ typedef enum {
     SCHRES_ERR,        // error
 } schres_t;            // sort chain result
 
-schres_t sortchain_init(schh_t *handle, unsigned int thres);
+schres_t sortchain_init(schh_t *handle, unsigned int thres, unsigned int sectot);
 schres_t sortchain_add(schh_t *handle, schdat_t data, schdat_t *mid);
 
 #ifdef __cplusplus
