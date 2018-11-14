@@ -227,6 +227,7 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
     }
 
     // get mid-value
+    // TODO  polling whole chain to get mid-value, not good
     for(anynode = handle->head, i = 0; anynode != NULL; anynode = anynode->next, i++)
     {
         if(i == THRESHOLD / 2)
@@ -284,16 +285,15 @@ static void get_mid(schh_t *handle, schdat_t *mid)
  * @param handle: the sort chain handle
  * @param thres: threshhold. the sortchain will pop out oldest data when
  *              the number of data reaches @thres
- * @param sectot: section total
+ * @param sectot: section total. this parameter has no concerns with @mid,
+ *                but the speed of function @sortchain_add. it is suggested
+ *                to make it equal to the square root of @thres to let
+ *                @sortchain_add act fastest
  * @return: see @schres_t
  */
 schres_t sortchain_init(schh_t *handle, unsigned int thres, unsigned int sectot)
 {
     if(!handle || !thres || thres > SCH_NODES_TOTAL)
-    {
-        return SCHRES_ERR;
-    }
-    if(thres / 2 * 2 == thres)  // thres can not be even
     {
         return SCHRES_ERR;
     }
@@ -375,7 +375,7 @@ int demo_main(void)
         19, 4, -7, 16, 0, 8, 4, 5, 13, 9, -14, 16, 7, 7, 3, -5, 11,
     };
 
-    if(sortchain_init(&datalib, 9, 3) != SCHRES_OK)
+    if(sortchain_init(&datalib, 5, 5) != SCHRES_OK)
     {
         printf("init error!\n");
         return -1;

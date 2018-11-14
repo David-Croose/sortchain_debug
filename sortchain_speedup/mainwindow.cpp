@@ -59,16 +59,15 @@ void MainWindow::on_pushButton_clicked()
 
         if(mode == HOLTER_MODE)
         {
-            buffer_size = 127;
+            buffer_size = 128;
         }
         else
         {
-            buffer_size = 1999;
-            /// buffer_size = 999;
+            buffer_size = 2000;
         }
         for(uint32_t i = 0; i < 12; i++)
         {
-            sortchain_init(&handle[i], buffer_size);
+            sortchain_init(&handle[i], buffer_size, 40);
         }
 
         for(uint32_t i = 0; i < startline + totalline; i++)

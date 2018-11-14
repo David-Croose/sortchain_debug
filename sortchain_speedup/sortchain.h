@@ -16,16 +16,7 @@ extern "C" {
 
 // user configure here
 typedef int schdat_t;       /* sort chain data */
-/// #define SCH_NODES_TOTAL     (3999)
-#define SCH_NODES_TOTAL     (11)
-
-#if ((SCH_NODES_TOTAL / 2 * 2) == SCH_NODES_TOTAL)
-#   error the @SCH_NODES_TOTAL must be odd!
-#endif
-
-#if (SCH_NODES_TOTAL == 1)
-#   error the @SCH_NODES_TOTAL can not be 1!
-#endif
+#define SCH_NODES_TOTAL     (3999)
 
 #define SCH_TRUE    (1)
 #define SCH_FALSE   (0)
