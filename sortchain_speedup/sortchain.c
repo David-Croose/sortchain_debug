@@ -39,18 +39,27 @@ static schres_t find_emptynode(schh_t *handle, schnode_t **node)
 {
     unsigned int i;
 
-    for(i = 0; i < THRESHOLD; i++)
+    if(handle->sparenode != NULL)
     {
-        if(handle->nodes[i].hasdata_flag == SCH_FALSE)
+        *node = handle->sparenode;
+        return SCHRES_OK;
+    }
+    else
+    {
+        for(i = 0; i < THRESHOLD; i++)
         {
-            *node = &handle->nodes[i];
-            return SCHRES_OK;
+            if(handle->nodes[i].hasdata_flag == SCH_FALSE)
+            {
+                *node = &handle->nodes[i];
+                return SCHRES_OK;
+            }
         }
     }
 
     return SCHRES_ERR;
 }
 
+#if 0
 /**
  * delete the oldest node of @handle
  * @param handle: the sort chain handle
@@ -88,6 +97,46 @@ static void delete_oldestdata(schh_t *handle)
         }
     }
 }
+#endif
+
+//===============================================================================
+/**
+ * delete the oldest node from @handle
+ * @param handle: the sort chain handle
+ */
+static void delete_oldestdata(schh_t *handle)
+{
+    schnode_t *delnode;     // delete node
+
+    // get the oldest node
+    fifo_od(&handle->odqh, &delnode);
+
+    // delete the oldest node
+    if(delnode->next == NULL)
+    {
+        // if @delnode is in the end
+        delnode->prev->next = NULL;
+    }
+    else if(delnode == handle->head)
+    {
+        // if @delnode is in the head
+        handle->head = delnode->next;
+        delnode->next->prev = handle->head;
+    }
+    else
+    {
+        delnode->prev->next = delnode->next;
+        delnode->next->prev = delnode->prev;
+    }
+    memset(delnode, 0, sizeof(schnode_t));
+
+    // update @oldestseq
+    handle->oldestseq++;
+
+    // update @sparenode
+    handle->sparenode = delnode;
+}
+//-------------------------------------------------------------------------------
 
 ///////////////////////////////////////
 static void print_all(schh_t *handle)
@@ -139,11 +188,13 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
     (*node).seq = handle->newestseq++;
     (*node).hasdata_flag = SCH_TRUE;
     (*node).next = NULL;
+    (*node).prev = NULL;
     if(handle->head == NULL)
     {
         // if there is only one data in sort chain now
         handle->head = node;
-        return SCHRES_OK;
+        (*node).prev = handle->head;
+        goto after_inserting;
     }
 
     // searching all sections to know where the @data should lay in
@@ -186,8 +237,15 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
                 {
                     if(data < anynode->next->data)
                     {
+                        /// (*node).next = anynode->next;
+                        /// anynode->next = node;
+                        /// break;
+
+                        ////////////////////////////////
                         (*node).next = anynode->next;
+                        anynode->next->prev = node;
                         anynode->next = node;
+                        (*node).prev = anynode;
                         break;
                     }
                     else
@@ -199,8 +257,14 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
                 {
                     // if anynode <= data < anynode.next==NULL, then the data
                     // would be in the end position
-                    anynode->next = node;
+                    /// anynode->next = node;
+                    /// (*node).next = NULL;
+                    /// break;
+
+                    ////////////////////////////////
                     (*node).next = NULL;
+                    (*node).prev = anynode;
+                    anynode->next = node;
                     break;
                 }
             }
@@ -208,8 +272,15 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
             {
                 // data < head, we place it in the left of the head, and make
                 // it be the head
+                /// (*node).next = handle->head;
+                /// handle->head = node;
+                /// break;
+
+                //////////////////////////
                 (*node).next = handle->head;
+                handle->head->prev = node;
                 handle->head = node;
+                (*node).prev = handle->head;
                 break;
             }
         }
@@ -219,6 +290,8 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
     {
         return SCHRES_ERR;
     }
+
+after_inserting:
 
     // update the @full_flag
     if(handle->full_flag == SCH_FALSE && (handle->newestseq - handle->oldestseq) >= handle->thres)
@@ -233,8 +306,12 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
         if(i == THRESHOLD / 2)
         {
             handle->mid = anynode->data;
+            break;
         }
     }
+
+    // push the current node address to fifo
+    fifo_in(&handle->odqh, &node);
 
     return SCHRES_OK;
 }
@@ -306,6 +383,7 @@ schres_t sortchain_init(schh_t *handle, unsigned int thres, unsigned int sectot)
     handle->thres = thres;
     handle->sectot = sectot;
     handle->secsz = handle->thres / handle->sectot;
+    fifo_init(&handle->odqh, handle->odqb, sizeof(schnode_t *), handle->thres + 1);
     return SCHRES_OK;
 }
 
@@ -364,7 +442,7 @@ schres_t sortchain_add(schh_t *handle, schdat_t data, schdat_t *mid)
     return SCHRES_OK;
 }
 
-int demo_main(void)
+int sortchain_demo_main(void)
 {
     schres_t res;
     schh_t datalib;
@@ -375,7 +453,7 @@ int demo_main(void)
         19, 4, -7, 16, 0, 8, 4, 5, 13, 9, -14, 16, 7, 7, 3, -5, 11,
     };
 
-    if(sortchain_init(&datalib, 5, 5) != SCHRES_OK)
+    if(sortchain_init(&datalib, 8, 1) != SCHRES_OK)
     {
         printf("init error!\n");
         return -1;

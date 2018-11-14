@@ -10,6 +10,8 @@
 #ifndef _SORTCHAIN_H_
 #define _SORTCHAIN_H_
 
+#include "fifo.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -25,7 +27,8 @@ typedef struct SCHNODE {
     schdat_t data;
     unsigned int seq;
     char hasdata_flag;
-    struct SCHNODE *next;
+    struct SCHNODE *next;                  // next node
+    struct SCHNODE *prev;                  // previous node
 } schnode_t;   // sort chain node
 
 typedef struct {
@@ -39,7 +42,7 @@ typedef struct {
     unsigned int thres;                    // threshold, the window size of the this handle
     unsigned int sectot;                   // section-total
     unsigned int secsz;                    // section-size, equals to @thres / @sectot
-    struct {
+    struct SEC {
         schnode_t *addr;                   // each section's minimal node address
         schdat_t minimum;                  // each section's minimal data
     } sec[SCH_NODES_TOTAL];                // section. a sort-chain will be divided into
@@ -48,6 +51,12 @@ typedef struct {
                                            // is pointed to the minimal node of the sort-
                                            // chain.
     schdat_t mid;
+
+    struct NODE odqh;                      // oldest data queue handle
+    schnode_t *odqb[SCH_NODES_TOTAL];      // oldest data queue buffer
+
+    schnode_t *sparenode;                  // when a node had been deleted from a sortchain, it
+                                           // becomes a spare-node
 } schh_t;                                  // sort-chain handle
 
 typedef enum {

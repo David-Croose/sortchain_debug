@@ -26,11 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    sortchain.c
+    sortchain.c \
+    fifo.c
 
 HEADERS += \
         mainwindow.h \
-    sortchain.h
+    sortchain.h \
+    fifo.h
 
 FORMS += \
         mainwindow.ui
