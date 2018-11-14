@@ -15,8 +15,9 @@ extern "C" {
 #endif
 
 // user configure here
-typedef float schdat_t;       /* sort chain data */
-#define SCH_NODES_TOTAL     (3999)
+typedef int schdat_t;       /* sort chain data */
+/// #define SCH_NODES_TOTAL     (3999)
+#define SCH_NODES_TOTAL     (11)
 
 #if ((SCH_NODES_TOTAL / 2 * 2) == SCH_NODES_TOTAL)
 #   error the @SCH_NODES_TOTAL must be odd!
@@ -46,13 +47,16 @@ typedef struct {
     schnode_t *head;
     unsigned int thres;                    // threshold, the window size of the this handle
     unsigned int sectot;                   // section-total
-    struct {                               // section, the datas in a handle
-        schnode_t *addr;                   // will be divided into @sectot sections.
-        schdat_t minimum;                  // the sections, each of them has a value
-    } sec[SCH_NODES_TOTAL];                // @sec[n].minimum, means the minimal value in
-                                           // this section.
+    unsigned int secsz;                    // section-size, equals to @thres / @sectot
+    struct {
+        schnode_t *addr;                   // each section's minimal node address
+        schdat_t minimum;                  // each section's minimal data
+    } sec[SCH_NODES_TOTAL];                // section. a sort-chain will be divided into
+                                           // @sectot sections, each of them has it's own
+                                           // minimal data konwn as @minimum, and the @addr
+                                           // is pointed to the minimal node of the sort-
+                                           // chain.
     schdat_t mid;
-
 } schh_t;                                  // sort-chain handle
 
 typedef enum {
