@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 // user configure here
-typedef int schdat_t;       /* sort chain data */
+typedef float schdat_t;       /* sort chain data */
 #define SCH_NODES_TOTAL     (3999)
 
 #define SCH_TRUE    (1)
