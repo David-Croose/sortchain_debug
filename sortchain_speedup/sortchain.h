@@ -18,7 +18,7 @@ extern "C" {
 
 // user configure here
 typedef float schdat_t;       /* sort chain data */
-#define SCH_NODES_TOTAL     (3999)
+#define SCH_NODES_TOTAL     (2100)
 
 #define SCH_TRUE    (1)
 #define SCH_FALSE   (0)
@@ -40,23 +40,11 @@ typedef struct {
                                            // newest seq in sort chain is @newestseq - 1
     schnode_t *head;
     unsigned int thres;                    // threshold, the window size of the this handle
-    unsigned int sectot;                   // section-total
-    unsigned int secsz;                    // section-size, equals to @thres / @sectot
-    struct SEC {
-        schnode_t *addr;                   // each section's minimal node address
-        schdat_t minimum;                  // each section's minimal data
-    } sec[SCH_NODES_TOTAL];                // section. a sort-chain will be divided into
-                                           // @sectot sections, each of them has it's own
-                                           // minimal data konwn as @minimum, and the @addr
-                                           // is pointed to the minimal node of the sort-
-                                           // chain.
-    schdat_t mid;
-
     struct NODE odqh;                      // oldest data queue handle
     schnode_t *odqb[SCH_NODES_TOTAL];      // oldest data queue buffer
-
     schnode_t *sparenode;                  // when a node had been deleted from a sortchain, it
                                            // becomes a spare-node
+    schnode_t *lin;                        // last-insert-node
 } schh_t;                                  // sort-chain handle
 
 typedef enum {
@@ -65,7 +53,7 @@ typedef enum {
     SCHRES_ERR,        // error
 } schres_t;            // sort chain result
 
-schres_t sortchain_init(schh_t *handle, unsigned int thres, unsigned int sectot);
+schres_t sortchain_init(schh_t *handle, unsigned int thres);
 schres_t sortchain_add(schh_t *handle, schdat_t data, schdat_t *mid);
 
 #ifdef __cplusplus

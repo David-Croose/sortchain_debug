@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFile>
 #include <QTextStream>
+#include <QDateTime>
 
 #include "sortchain.h"
 
@@ -36,6 +37,7 @@ void MainWindow::on_pushButton_clicked()
     uint32_t startline = ui->lineEdit_2->text().toInt();
     uint32_t totalline = ui->lineEdit_3->text().toInt();
     uint32_t buffer_size;
+    uint32_t time;
 
     dfileloc.remove(dfileloc.length() - strlen(".txt"), strlen(".txt"));
     dfileloc.append("__proc.txt");
@@ -45,6 +47,8 @@ void MainWindow::on_pushButton_clicked()
     {
         dfile.remove();
     }
+
+    ui->statusBar->clearMessage();
 
     // 打开源文件，读取源文件，把源文件的内容处理后存储到目标文件
     QFile file(fileloc);
@@ -67,8 +71,11 @@ void MainWindow::on_pushButton_clicked()
         }
         for(uint32_t i = 0; i < 12; i++)
         {
-            sortchain_init(&handle[i], buffer_size, 40);
+            sortchain_init(&handle[i], buffer_size);
         }
+
+        QDateTime startTime = QDateTime::currentDateTime();
+        QString startTimeS = startTime.toString("ss");
 
         for(uint32_t i = 0; i < startline + totalline; i++)
         {
@@ -123,9 +130,13 @@ void MainWindow::on_pushButton_clicked()
             }
             dfile.close();
         }
+        QDateTime endTime = QDateTime::currentDateTime();
+        QString endTimeS = endTime.toString("ss");
+
+        int intervalTime = endTimeS.toInt() - startTimeS.toInt();
+        ui->statusBar->showMessage(QString::number(intervalTime) + "S", 30000);
     }
     file.close();
-    ui->statusBar->showMessage("Done", 3000);
 }
 
 void MainWindow::on_checkBox_clicked()
@@ -141,5 +152,3 @@ void MainWindow::on_checkBox_2_clicked()
     ui->checkBox->setChecked(false);
     ui->checkBox_2->setChecked(true);
 }
-
-
