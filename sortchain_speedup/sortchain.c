@@ -59,47 +59,6 @@ static schres_t find_emptynode(schh_t *handle, schnode_t **node)
     return SCHRES_ERR;
 }
 
-#if 0
-/**
- * delete the oldest node of @handle
- * @param handle: the sort chain handle
- */
-static void delete_oldestdata(schh_t *handle)
-{
-    schnode_t *anynode, *deletenode;
-
-    // if the first one is the oldest one
-    if(handle->head->seq == handle->oldestseq)
-    {
-        anynode = handle->head;
-        handle->head = handle->head->next;
-        anynode->next = NULL;
-        anynode->hasdata_flag = SCH_FALSE;
-        anynode->data = 0;
-        handle->oldestseq++;
-        anynode->seq = 0;
-        return;
-    }
-
-    // if the oldest one isn't in the first place
-    for(anynode = handle->head; anynode != NULL; anynode = anynode->next)
-    {
-        if((anynode->next->seq == handle->oldestseq))
-        {
-            deletenode = anynode->next;
-            anynode->next = deletenode->next;
-            deletenode->next = NULL;
-            deletenode->hasdata_flag = SCH_FALSE;
-            handle->oldestseq++;
-            deletenode->seq = 0;
-            deletenode->data = 0;
-            return;
-        }
-    }
-}
-#endif
-
-//===============================================================================
 /**
  * delete the oldest node from @handle
  * @param handle: the sort chain handle
@@ -136,7 +95,6 @@ static void delete_oldestdata(schh_t *handle)
     // update @sparenode
     handle->sparenode = delnode;
 }
-//-------------------------------------------------------------------------------
 
 ///////////////////////////////////////
 static void print_all(schh_t *handle)
@@ -237,11 +195,6 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
                 {
                     if(data < anynode->next->data)
                     {
-                        /// (*node).next = anynode->next;
-                        /// anynode->next = node;
-                        /// break;
-
-                        ////////////////////////////////
                         (*node).next = anynode->next;
                         anynode->next->prev = node;
                         anynode->next = node;
@@ -257,11 +210,6 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
                 {
                     // if anynode <= data < anynode.next==NULL, then the data
                     // would be in the end position
-                    /// anynode->next = node;
-                    /// (*node).next = NULL;
-                    /// break;
-
-                    ////////////////////////////////
                     (*node).next = NULL;
                     (*node).prev = anynode;
                     anynode->next = node;
@@ -272,11 +220,6 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
             {
                 // data < head, we place it in the left of the head, and make
                 // it be the head
-                /// (*node).next = handle->head;
-                /// handle->head = node;
-                /// break;
-
-                //////////////////////////
                 (*node).next = handle->head;
                 handle->head->prev = node;
                 handle->head = node;
