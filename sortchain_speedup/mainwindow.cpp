@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFile>
 #include <QTextStream>
+#include <QDateTime>
 
 #include "sortchain.h"
 
@@ -46,6 +47,8 @@ void MainWindow::on_pushButton_clicked()
         dfile.remove();
     }
 
+    ui->statusBar->clearMessage();
+
     // 打开源文件，读取源文件，把源文件的内容处理后存储到目标文件
     QFile file(fileloc);
     if(file.open(QIODevice::ReadOnly) == true)
@@ -69,6 +72,10 @@ void MainWindow::on_pushButton_clicked()
         {
             sortchain_init(&handle[i], buffer_size, 40);
         }
+
+        // 获取起始时间
+        QDateTime startTime = QDateTime::currentDateTime();
+        QString startTimeS = startTime.toString("ss");
 
         for(uint32_t i = 0; i < startline + totalline; i++)
         {
@@ -123,9 +130,15 @@ void MainWindow::on_pushButton_clicked()
             }
             dfile.close();
         }
+
+        // 获取结束时间
+        QDateTime endTime = QDateTime::currentDateTime();
+        QString endTimeS = endTime.toString("ss");
+
+        int intervalTime = endTimeS.toInt() - startTimeS.toInt();
+        ui->statusBar->showMessage(QString::number(intervalTime) + "S", 30000);
     }
     file.close();
-    ui->statusBar->showMessage("Done", 3000);
 }
 
 void MainWindow::on_checkBox_clicked()

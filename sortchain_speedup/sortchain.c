@@ -59,47 +59,6 @@ static schres_t find_emptynode(schh_t *handle, schnode_t **node)
     return SCHRES_ERR;
 }
 
-#if 0
-/**
- * delete the oldest node of @handle
- * @param handle: the sort chain handle
- */
-static void delete_oldestdata(schh_t *handle)
-{
-    schnode_t *anynode, *deletenode;
-
-    // if the first one is the oldest one
-    if(handle->head->seq == handle->oldestseq)
-    {
-        anynode = handle->head;
-        handle->head = handle->head->next;
-        anynode->next = NULL;
-        anynode->hasdata_flag = SCH_FALSE;
-        anynode->data = 0;
-        handle->oldestseq++;
-        anynode->seq = 0;
-        return;
-    }
-
-    // if the oldest one isn't in the first place
-    for(anynode = handle->head; anynode != NULL; anynode = anynode->next)
-    {
-        if((anynode->next->seq == handle->oldestseq))
-        {
-            deletenode = anynode->next;
-            anynode->next = deletenode->next;
-            deletenode->next = NULL;
-            deletenode->hasdata_flag = SCH_FALSE;
-            handle->oldestseq++;
-            deletenode->seq = 0;
-            deletenode->data = 0;
-            return;
-        }
-    }
-}
-#endif
-
-//===============================================================================
 /**
  * delete the oldest node from @handle
  * @param handle: the sort chain handle
@@ -110,6 +69,22 @@ static void delete_oldestdata(schh_t *handle)
 
     // get the oldest node
     fifo_od(&handle->odqh, &delnode);
+
+    // get the deleted node information, so we can get
+    // the mid-node position in @insert_newestdata
+    if(delnode->data < handle->midnode->data)
+    {
+        handle->del_flag = DELP_LEFT;
+    }
+    else if(delnode->data > handle->midnode->data)
+    {
+        handle->del_flag = DELP_RIGHT;
+    }
+    if(delnode == handle->midnode)
+    {
+        handle->del_flag = DELP_MID;
+    }
+    handle->ldelnode = handle->midnode->prev;
 
     // delete the oldest node
     if(delnode->next == NULL)
@@ -130,13 +105,10 @@ static void delete_oldestdata(schh_t *handle)
     }
     memset(delnode, 0, sizeof(schnode_t));
 
-    // update @oldestseq
+    // updating the related stuff
     handle->oldestseq++;
-
-    // update @sparenode
     handle->sparenode = delnode;
 }
-//-------------------------------------------------------------------------------
 
 ///////////////////////////////////////
 static void print_all(schh_t *handle)
@@ -155,7 +127,15 @@ static void print_all(schh_t *handle)
     {
         printf("%d ", anynode->data);
     }
-    printf("  ---  mid=%d\n", handle->mid);
+
+    if(handle->full_flag == 1)
+    {
+        printf("  ---  mid=%d\n", handle->midnode->data);
+    }
+    else
+    {
+        printf("  ---  mid=NA\n");
+    }
 #endif
 }
 ///////////////////////////////////////
@@ -237,11 +217,6 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
                 {
                     if(data < anynode->next->data)
                     {
-                        /// (*node).next = anynode->next;
-                        /// anynode->next = node;
-                        /// break;
-
-                        ////////////////////////////////
                         (*node).next = anynode->next;
                         anynode->next->prev = node;
                         anynode->next = node;
@@ -251,17 +226,13 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
                     else
                     {
                         // if the @data > anynode.next, push the anynode to next
+                        // nothing to do here
                     }
                 }
                 else
                 {
                     // if anynode <= data < anynode.next==NULL, then the data
                     // would be in the end position
-                    /// anynode->next = node;
-                    /// (*node).next = NULL;
-                    /// break;
-
-                    ////////////////////////////////
                     (*node).next = NULL;
                     (*node).prev = anynode;
                     anynode->next = node;
@@ -272,11 +243,6 @@ static schres_t insert_newestdata(schh_t *handle, schdat_t data)
             {
                 // data < head, we place it in the left of the head, and make
                 // it be the head
-                /// (*node).next = handle->head;
-                /// handle->head = node;
-                /// break;
-
-                //////////////////////////
                 (*node).next = handle->head;
                 handle->head->prev = node;
                 handle->head = node;
@@ -298,15 +264,56 @@ after_inserting:
     {
         handle->full_flag = SCH_TRUE;
     }
-
+#if 0
     // get mid-value
-    // TODO  polling whole chain to get mid-value, not good
-    for(anynode = handle->head, i = 0; anynode != NULL; anynode = anynode->next, i++)
+    if(handle->ldelnode != NULL)
     {
-        if(i == THRESHOLD / 2)
+        switch(handle->del_flag)
         {
-            handle->mid = anynode->data;
+        case DELP_LEFT:
+            if(data >= handle->midnode->data)
+            {
+                handle->midnode = handle->midnode->next;
+            }
+            else
+            {
+                // nothing to do here
+            }
             break;
+
+        case DELP_RIGHT:
+            if(data >= handle->midnode->data)
+            {
+                // nothing to do here
+            }
+            else
+            {
+				handle->midnode = handle->midnode->prev;
+            }
+            break;
+
+        case DELP_MID:
+            if(data >= handle->ldelnode->data)
+            {
+                handle->midnode = handle->ldelnode->next;
+            }
+            else
+            {
+                handle->midnode = handle->ldelnode;
+            }
+            break;
+        }
+    }
+    else
+#endif
+    {
+        for(anynode = handle->head, i = 0; anynode != NULL; anynode = anynode->next, i++)
+        {
+            if(i == THRESHOLD / 2)
+            {
+                handle->midnode = anynode;
+                break;
+            }
         }
     }
 
@@ -354,7 +361,7 @@ static void reset_all_seq(schh_t *handle)
  */
 static void get_mid(schh_t *handle, schdat_t *mid)
 {
-    *mid = handle->mid;
+    *mid = handle->midnode->data;
 }
 
 /**
@@ -453,7 +460,7 @@ int sortchain_demo_main(void)
         19, 4, -7, 16, 0, 8, 4, 5, 13, 9, -14, 16, 7, 7, 3, -5, 11,
     };
 
-    if(sortchain_init(&datalib, 8, 1) != SCHRES_OK)
+    if(sortchain_init(&datalib, 12, 4) != SCHRES_OK)
     {
         printf("init error!\n");
         return -1;

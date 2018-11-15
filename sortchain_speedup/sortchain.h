@@ -20,6 +20,12 @@ extern "C" {
 typedef float schdat_t;       /* sort chain data */
 #define SCH_NODES_TOTAL     (3999)
 
+typedef enum {
+    DELP_LEFT,
+    DELP_RIGHT,
+    DELP_MID,
+} delp_t;                   // delete position
+
 #define SCH_TRUE    (1)
 #define SCH_FALSE   (0)
 
@@ -50,7 +56,10 @@ typedef struct {
                                            // minimal data konwn as @minimum, and the @addr
                                            // is pointed to the minimal node of the sort-
                                            // chain.
-    schdat_t mid;
+    schnode_t *midnode;
+    schnode_t *ldelnode;                   // left-delete-node. the node in the left of the
+                                           // deleted node
+    delp_t del_flag;                       // the deleted node position refering to midnode
 
     struct NODE odqh;                      // oldest data queue handle
     schnode_t *odqb[SCH_NODES_TOTAL];      // oldest data queue buffer
