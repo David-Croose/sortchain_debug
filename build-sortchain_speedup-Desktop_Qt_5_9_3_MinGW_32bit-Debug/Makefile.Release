@@ -511,11 +511,74 @@ release/mainwindow.o: ../sortchain_speedup/mainwindow.cpp ../sortchain_speedup/m
 		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtWidgets/QWidget \
 		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/QFile \
 		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/QTextStream \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/QDateTime \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qdatetime.h \
 		../sortchain_speedup/sortchain.h \
 		../sortchain_speedup/fifo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\mainwindow.o ..\sortchain_speedup\mainwindow.cpp
 
-release/sortchain.o: ../sortchain_speedup/sortchain.c ../sortchain_speedup/sortchain.h \
+release/sortchain.o: ../sortchain_speedup/sortchain.c F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/QDebug \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qdebug.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qalgorithms.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qglobal.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qconfig-bootstrapped.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qconfig.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qtcore-config.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qsystemdetection.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qprocessordetection.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qcompilerdetection.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qtypeinfo.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qsysinfo.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qlogging.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qflags.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qatomic.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qbasicatomic.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qatomic_bootstrap.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qgenericatomic.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qatomic_cxx11.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qatomic_msvc.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qglobalstatic.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qmutex.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qnumeric.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qversiontagging.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qhash.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qchar.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qiterator.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qlist.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qrefcount.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qarraydata.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qhashfunctions.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qpair.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qbytearraylist.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qbytearray.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qnamespace.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qstring.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qstringbuilder.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qstringlist.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qregexp.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qstringmatcher.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qmap.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qtextstream.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qiodevice.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qobject.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qobjectdefs.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qobjectdefs_impl.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qcoreevent.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qscopedpointer.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qmetatype.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qvarlengtharray.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qcontainerfwd.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qobject_impl.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qlocale.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qvariant.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qshareddata.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qvector.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qpoint.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qset.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qcontiguouscache.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qsharedpointer.h \
+		F:/Qt/Qt5.9.3/5.9.3/mingw53_32/include/QtCore/qsharedpointer_impl.h \
+		../sortchain_speedup/sortchain.h \
 		../sortchain_speedup/fifo.h
 	$(CC) -c $(CFLAGS) $(INCPATH) -o release\sortchain.o ..\sortchain_speedup\sortchain.c
 

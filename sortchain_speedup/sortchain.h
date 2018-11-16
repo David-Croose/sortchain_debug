@@ -18,14 +18,23 @@ extern "C" {
 
 // user configure here
 typedef float schdat_t;       /* sort chain data */
-#define SCH_NODES_TOTAL     (2100)
+#define SCH_NODES_TOTAL       (3999)
 
 #define SCH_TRUE    (1)
 #define SCH_FALSE   (0)
 
+typedef enum {
+    DELP_NONE = 0,
+    DELP_LEFT,
+    DELP_RIGHT,
+    DELP_MID,
+} delp_t;                                  // delete position
+
 typedef struct SCHNODE {
     schdat_t data;
-    unsigned int seq;
+    unsigned int seq;                      // sequence, the data inserted history
+    unsigned int sseq;                     // same-sequence, if a data equals to the previous
+                                           // it's sseq += 1
     char hasdata_flag;
     struct SCHNODE *next;                  // next node
     struct SCHNODE *prev;                  // previous node
@@ -45,6 +54,11 @@ typedef struct {
     schnode_t *sparenode;                  // when a node had been deleted from a sortchain, it
                                            // becomes a spare-node
     schnode_t *lin;                        // last-insert-node
+
+    delp_t del_flag;                       // the deleted node position refering to midnode
+    schnode_t *midnode;
+    schnode_t *ldelnode;                   // left-delete-node. the node in the left of the
+                                           // deleted node
 } schh_t;                                  // sort-chain handle
 
 typedef enum {
