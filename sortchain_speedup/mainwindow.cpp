@@ -37,6 +37,7 @@ void MainWindow::on_pushButton_clicked()
     uint32_t startline = ui->lineEdit_2->text().toInt();
     uint32_t totalline = ui->lineEdit_3->text().toInt();
     uint32_t buffer_size;
+    uint32_t time;
 
     dfileloc.remove(dfileloc.length() - strlen(".txt"), strlen(".txt"));
     dfileloc.append("__proc.txt");
@@ -70,10 +71,13 @@ void MainWindow::on_pushButton_clicked()
         }
         for(uint32_t i = 0; i < 12; i++)
         {
-            sortchain_init(&handle[i], buffer_size, 40);
+            sortchain_init(&handle[i], buffer_size);
         }
 
+<<<<<<< HEAD
         // 获取起始时间
+=======
+>>>>>>> develop_1
         QDateTime startTime = QDateTime::currentDateTime();
         QString startTimeS = startTime.toString("ss");
 
@@ -130,8 +134,11 @@ void MainWindow::on_pushButton_clicked()
             }
             dfile.close();
         }
+<<<<<<< HEAD
 
         // 获取结束时间
+=======
+>>>>>>> develop_1
         QDateTime endTime = QDateTime::currentDateTime();
         QString endTimeS = endTime.toString("ss");
 
@@ -154,5 +161,3 @@ void MainWindow::on_checkBox_2_clicked()
     ui->checkBox->setChecked(false);
     ui->checkBox_2->setChecked(true);
 }
-
-

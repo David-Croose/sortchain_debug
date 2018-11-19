@@ -18,7 +18,7 @@ extern "C" {
 
 // user configure here
 typedef float schdat_t;       /* sort chain data */
-#define SCH_NODES_TOTAL     (3999)
+#define SCH_NODES_TOTAL       (3999)
 
 typedef enum {
     DELP_LEFT,
@@ -29,9 +29,18 @@ typedef enum {
 #define SCH_TRUE    (1)
 #define SCH_FALSE   (0)
 
+typedef enum {
+    DELP_NONE = 0,
+    DELP_LEFT,
+    DELP_RIGHT,
+    DELP_MID,
+} delp_t;                                  // delete position
+
 typedef struct SCHNODE {
     schdat_t data;
-    unsigned int seq;
+    unsigned int seq;                      // sequence, the data inserted history
+    unsigned int sseq;                     // same-sequence, if a data equals to the previous
+                                           // it's sseq += 1
     char hasdata_flag;
     struct SCHNODE *next;                  // next node
     struct SCHNODE *prev;                  // previous node
@@ -46,6 +55,7 @@ typedef struct {
                                            // newest seq in sort chain is @newestseq - 1
     schnode_t *head;
     unsigned int thres;                    // threshold, the window size of the this handle
+<<<<<<< HEAD
     unsigned int sectot;                   // section-total
     unsigned int secsz;                    // section-size, equals to @thres / @sectot
     struct SEC {
@@ -61,11 +71,18 @@ typedef struct {
                                            // deleted node
     delp_t del_flag;                       // the deleted node position refering to midnode
 
+=======
+>>>>>>> develop_1
     struct NODE odqh;                      // oldest data queue handle
     schnode_t *odqb[SCH_NODES_TOTAL];      // oldest data queue buffer
-
     schnode_t *sparenode;                  // when a node had been deleted from a sortchain, it
                                            // becomes a spare-node
+    schnode_t *lin;                        // last-insert-node
+
+    delp_t del_flag;                       // the deleted node position refering to midnode
+    schnode_t *midnode;
+    schnode_t *ldelnode;                   // left-delete-node. the node in the left of the
+                                           // deleted node
 } schh_t;                                  // sort-chain handle
 
 typedef enum {
@@ -74,7 +91,7 @@ typedef enum {
     SCHRES_ERR,        // error
 } schres_t;            // sort chain result
 
-schres_t sortchain_init(schh_t *handle, unsigned int thres, unsigned int sectot);
+schres_t sortchain_init(schh_t *handle, unsigned int thres);
 schres_t sortchain_add(schh_t *handle, schdat_t data, schdat_t *mid);
 
 #ifdef __cplusplus
