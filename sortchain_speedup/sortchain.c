@@ -253,10 +253,9 @@ static void insert_smallerdata(schh_t *handle, schnode_t *node)
         return;
     }
 
-    for(anynode = handle->lin; /* TODO  need something here? */; anynode = anynode->prev)
+    for(anynode = handle->lin; /* nothing here */; anynode = anynode->prev)
     {
-        // TODO  if(node->data >= anynode->prev->data) right?
-        if(node->data < anynode->data && node->data >= anynode->prev->data)
+        if(node->data >= anynode->prev->data)
         {
             // if anynode->prev <= data < anynode, then the data would lay
             // between them
